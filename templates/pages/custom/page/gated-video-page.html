@@ -1,0 +1,110 @@
+{{#partial "page"}}
+
+{{> components/common/breadcrumbs breadcrumbs=breadcrumbs}}
+
+<section class="page">
+    {{#unless theme_settings.hide_page_heading }}
+        <h1 class="page-heading">{{ page.title }}</h1>
+    {{/unless}}
+
+    {{#if page.sub_pages}}
+    <nav class="navBar navBar--sub">
+        <ul class="navBar-section account-navigation">
+        {{#each page.sub_pages}}
+            <li class="navBar-item"><a class="navBar-action" href="{{url}}">{{title}}</a></li>
+        {{/each}}
+        </ul>
+    </nav>
+    {{/if}}
+
+    {{{region name="page_builder_content"}}}
+    <div class="page-content page-content--centered">
+        {{#if customer}}
+            {{#replace '%%Syndicate%%' page.content}}
+                {{> components/page/rss_feed}}
+            {{else}}
+                <p>{{{page.content}}}</p>
+                {{>components/common/share}}
+            {{/replace}}
+        {{else}}
+        <div class="login">
+            <h1 class="page-heading">Sign in or create an account to view this content</h1>
+            {{#if forms.login.error}}
+                {{> components/common/alert/alert-error forms.login.error}}
+            {{/if}}
+            {{#if forms.login.success}}
+                {{> components/common/alert/alert-success forms.login.success}}
+            {{/if}}
+            <div class="login-row">
+                <form class="login-form form" action="{{urls.auth.check_login}}" method="post">
+                    <h2 class="panel-title">Sign in</h2>
+                    {{inject 'useValidEmail' (lang 'forms.validate.common.email_address')}}
+                    {{inject 'enterPass' (lang 'forms.validate.common.password')}}
+                    <div class="form-field">
+                        <label class="form-label" for="login_email">{{lang 'login.field_email'}}</label>
+                        <input class="form-input" name="login_email" id="login_email" type="email">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label" for="login_pass">{{lang 'login.field_password'}}</label>
+                        <input class="form-input" id="login_pass" type="password" name="login_pass" autocomplete="off">
+                    </div>
+                    <div class="form-actions">
+                        <input type="submit" class="button button--primary" value="{{lang 'login.submit_value' }}">
+                        <a class="forgot-password" href="{{urls.auth.forgot_password}}">{{lang 'login.forgot_password' }}</a>
+                    </div>
+                    <!-- ADD HIDDEN INPUT TO REDIRECT AFTER LOGIN -->
+                    <input type="hidden" id="redirect_to" name="redirect_to" value="{{settings.request.absolute_path}}">
+                </form>
+                {{#if settings.account_creation_enabled}}
+                    <div class="new-customer">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h2 class="panel-title">Create Account</h2>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-field">
+                                    <label class="form-label" for="signup_firstname">First Name</label>
+                                    <input class="form-input" id="signup_firstname" type="input" name="signup_firstname" autocomplete="off">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="signup_lastname">Last Name</label>
+                                    <input class="form-input" id="signup_lastname" type="input" name="signup_lastname" autocomplete="off">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="signup_email">{{lang 'login.field_email'}}</label>
+                                    <input class="form-input" name="signup_email" id="signup_email" type="email">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label" for="signup_pass">{{lang 'login.field_password'}}</label>
+                                    <input class="form-input" id="signup_pass" type="password" name="signup_pass" autocomplete="off">
+                                </div>
+                                <div>
+                                    <p>By signing up, you agree to receive marketing emails</p>
+                                </div>
+                                <div class="form-actions">
+                                    <input type="submit" id="signup-button" class="button button--primary" value="Sign Up">
+                                </div>                                   
+                            </div>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+
+    {{#if page.feed}}
+        <ul>
+            {{#each page.feed}}
+                <li>
+                    <h6><a href="{{url}}" target="_blank">{{title}}</a></h6>
+                    <p>{{content}}</p>
+                </li>
+            {{/each}}
+        </ul>
+    {{/if}}
+</section>
+
+{{/partial}}
+
+{{> layout/base}}

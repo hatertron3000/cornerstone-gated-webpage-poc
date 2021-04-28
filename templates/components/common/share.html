@@ -1,6 +1,10 @@
 {{#if settings.add_this.buttons}}
-    {{assignVar 'encodedUrl' (encodeURI url)}}
-    {{assignVar 'encodedTitle' (encodeURI head.title)}}
+    {{#unless page_type '===' 'page'}}
+        {{assignVar 'encodedUrl' (encodeURI url)}}
+    {{else}}
+        {{assignVar 'encodedUrl' (encodeURI (concat settings.request.origin settings.request.absolute_path))}}
+    {{/unless}}
+        {{assignVar 'encodedTitle' (encodeURI head.title)}}
     <div>
         <ul class="socialLinks">
             {{#each settings.add_this.buttons}}
